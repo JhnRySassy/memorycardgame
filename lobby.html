@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lobby System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    h1, h2 {
+      color: #333;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    #join-section, #start-section {
+      display: none;
+    }
+
+    #player-names {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+  <script>
+    var lobbyCode;
+    var player1Name;
+    var player2Name;
+
+    function createLobby() {
+      // Generate a random lobby code
+      lobbyCode = Math.random().toString(36).substr(2, 6).toUpperCase();
+
+      // Display the lobby code on the page
+      document.getElementById('lobby-code').textContent = "Lobby Code: " + lobbyCode;
+
+      // Enable the join button
+      document.getElementById('join-button').disabled = false;
+
+      // Show the join section
+      document.getElementById('join-section').style.display = 'block';
+    }
+
+    function joinLobby() {
+      var inputCode = document.getElementById('join-input').value.toUpperCase();
+
+      if (inputCode === lobbyCode) {
+        // Get player names
+        player1Name = document.getElementById('player1-name').value;
+        player2Name = document.getElementById('player2-name').value;
+
+        // Display player names
+        document.getElementById('player1').textContent = player1Name;
+        document.getElementById('player2').textContent = player2Name;
+
+        // Hide the join section and show the start section
+        document.getElementById('join-section').style.display = 'none';
+        document.getElementById('start-section').style.display = 'block';
+
+        // Send player names and lobby code to the server
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "start_lobby.php", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("player1=" + player1Name + "&player2=" + player2Name + "&lobbyCode=" + lobbyCode);
+      } else {
+        alert('Invalid lobby code');
+      }
+    }
+
+    function startLobby() {
+      // Perform necessary actions to start the lobby
+      alert('Lobby started');
+    }
+  </script>
+</head>
+<body>
+  <h1>Lobby System</h1>
+
+  <!-- Create Lobby Section -->
+  <div class="section">
+    <h2>Create Lobby</h2>
+    <button onclick="createLobby()">Create Lobby</button>
+    <p id="lobby-code"></p>
+  </div>
+
+  <!-- Join Lobby Section -->
+  <div class="section" id="join-section">
+    <h2>Join Lobby</h2>
+    <form action="" method="post">
+      <label for="player1-name">Player 1 Name:</label>
+      <input type="text" id="player1-name" name="player1-name" placeholder="Enter Player 1 Name" /><br>
+      <label for="player2-name">Player 2 Name:</label>
+      <input type="text" id="player2-name" name="player2-name" placeholder="Enter Player 2 Name" /><br>
+      <input type="text" id="join-input" name="lobby-code" placeholder="Enter Lobby Code" />
+      <button id="join-button" onclick="joinLobby()" disabled>Join</button>
+    </form>
+  </div>
+
+  <!-- Start Lobby Section -->
+  <div class="section" id="start-section">
+    <h2>Start Lobby</h2>
+    <p id="player-names">Players: <span id="player1"></span> vs <span id="player2"></span></p>
+    <button onclick="startLobby()">Start Lobby</button>
+  </div>
+</body>
+</html>
